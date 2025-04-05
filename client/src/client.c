@@ -19,7 +19,7 @@ int main(void)
 	// Usando el logger creado previamente
 	// Escribi: "Hola! Soy un log"
 
-	log_info(logger,"Soy un log");
+	log_info(logger,"Hola! Soy un log");
 
 
 	/* ---------------- ARCHIVOS DE CONFIGURACION ---------------- */
@@ -38,7 +38,7 @@ int main(void)
 	}
 	if(config_has_property(config,"VALOR")){
 		valor = config_get_string_value(config,"VALOR");
-		log_info(logger, valor);
+		log_info(logger,"Valor leido de la config: %s", valor);
 	}
 
 	/* ---------------- LEER DE CONSOLA ---------------- */
@@ -66,8 +66,12 @@ int main(void)
 
 
 t_log* iniciar_logger(void){
-	t_log* nuevo_logger = log_create("/home/utnso/Desktop/tp0/client/tp0.log","Hola! Soy un log",true,LOG_LEVEL_INFO);
 
+	t_log* nuevo_logger = log_create("/home/utnso/Desktop/tp0/client/tp0.log","CLIENTE.LOGGER",true,LOG_LEVEL_INFO);
+	if(nuevo_logger == NULL){
+		perror("No se pudocrear o encontrar el archivo .log");
+		exit(EXIT_FAILURE);
+	}
 	return nuevo_logger;
 }
 
@@ -75,8 +79,8 @@ t_config* iniciar_config(void)
 {
 	t_config* nuevo_config = config_create("/home/utnso/Desktop/tp0/client/cliente.config");
 	if(nuevo_config == NULL){
-		printf("No se pudo crear el config.\n");
-		abort();
+		perror("No se pudo crear el config.");
+		exit(EXIT_FAILURE);
 	}
 	return nuevo_config;
 }
@@ -84,18 +88,16 @@ t_config* iniciar_config(void)
 void leer_consola(t_log* logger)
 {
 	char* leido;
+	leido = readline("> ");
+    log_info(logger,">> %s", leido);
 
-    while (1) {
-        leido = readline("> ");
-
-        if(string_is_empty(leido)) {
-            break;
-        }
-
-        log_info(logger, leido);
-        free(leido);
-    }
-
+	while (strcmp(leido, "") != 0){
+		free(leido);
+		leido = readline("> ");
+		log_info(logger,">> %s", leido);
+	} 
+	free(leido);
+	
 	// La primera te la dejo de yapa
 	// El resto, las vamos leyendo y logueando hasta recibir un string vacío
 	// ¡No te olvides de liberar las lineas antes de regresar!
