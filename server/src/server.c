@@ -6,6 +6,8 @@ int main(void) {
 	int server_fd = iniciar_servidor();
 	log_info(logger, "Servidor listo para recibir al cliente");
 	int cliente_fd = esperar_cliente(server_fd);
+	verificacion_protocolo(cliente_fd);
+	
 
 	t_list* lista;
 	while (1) {
@@ -33,3 +35,19 @@ int main(void) {
 void iterator(char* value) {
 	log_info(logger,"%s", value);
 }
+
+void verificacion_protocolo(int fd_cliente){
+	size_t bytes;
+
+	int32_t handshake;
+	int32_t resultOk = 0;
+	int32_t resultError = -1;
+
+	bytes = recv(fd_cliente, &handshake, sizeof(int32_t), MSG_WAITALL);
+	if (handshake == 1) {
+    	bytes = send(fd_cliente, &resultOk, sizeof(int32_t), 0);
+	} else {
+    	bytes = send(fd_cliente, &resultError, sizeof(int32_t), 0);
+	}
+}
+ 

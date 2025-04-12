@@ -8,5 +8,6 @@
 #include "utils.h"
 
 void iterator(char* value);
+void verificacion_protocolo(int fd_cliente);
 
 #endif /* SERVER_H_ */
